@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Bus Tracker - Angamaly</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY"></script>
+    <style>
+      #map {
+        height: 100vh;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script>
+      function initMap() {
+        // 📍 Coordinates for Angamaly, Kerala
+        const angamaly = { lat: 10.1960, lng: 76.3869 };
+
+        // Create the map
+        const map = new google.maps.Map(document.getElementById("map"), {
+          zoom: 14,
+          center: angamaly,
+        });
+
+        // Add a bus emoji marker
+        new google.maps.Marker({
+          position: angamaly,
+          map: map,
+          icon: {
+            url: "https://img.icons8.com/emoji/48/bus.png", // Bus emoji icon
+            scaledSize: new google.maps.Size(48, 48),
+          },
+          title: "Bus at Angamaly",
+        });
+      }
+
+      window.onload = initMap;
+    </script>
+  </body>
+</html>

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Web Replica</title>
+    <style>
+        /* CSS: The "Glass" Interface Layer */
+        :root {
+            --primary: #6366f1;
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #1e1e1e, #3a3a3a);
+            color: #ffffff;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            overflow: hidden; /* Prevents scrollbars from breaking the 3D feel */
+            overflow-y: auto;
+        }
+
+        canvas {
+            display: block;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        /* UI Layer */
+        .content-overlay {
+            position: relative;
+            z-index: 10;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding-left: 8%;
+            pointer-events: none; /* Allows mouse to interact with 3D background */
+        }
+
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            padding: 40px;
+            border-radius: 24px;
+            max-width: 450px;
+            pointer-events: auto; /* Makes card and buttons clickable */
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .card {
+            max-width: 400px;
+            margin: 20px;
+            padding: 20px;
+            background: var(--glass);
+            border-radius: 15px;
+            box-shadow: 0 8px 30px var(--border);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            margin: 0;
+            padding: 0;
+            font-weight: normal;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        p {
+            line-height: 1.6;
+            margin: 10px 0;
+            font-size: 1.1em;
+            color: #e0e0e0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: var(--glass);
+            border-radius: 10px;
+            box-shadow: 0 4px 20px var(--border);
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            padding: 14px 32px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.4);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="content-overlay">
+        <div class="glass-card">
+            <h1>NATIONAL ELIGIBILITY CUM ENTRANCE TEST (UG)</h1>
+            <p>The Ministry of Human Resource Development (MHRD), which is now known as the Ministry of Education (MoE), Government of India (GOI) has established the National Testing Agency (NTA) as an independent, autonomous and self-sustained premier testing organisation for conducting efficient, transparent and international standard tests in order to assess the competency of candidates for admission to premier higher education institutions.
+
+NATIONAL ELIGIBILITY CUM ENTRANCE TEST [ NEET (UG)  2026 ] will be conducted by National Testing Agency (NTA), as a common and uniform National Eligibility-cum-Entrance Test [(NEET (UG)] for admission to undergraduate medical education in all medical institutions. Similarly, as per Section 14 of the National Commission for Indian System of Medicine Act, 2020, there shall be a uniform NEET (UG) for admission to undergraduate courses in each of the disciplines i.e. BAMS, BUMS, and BSMS courses of the Indian System of Medicine in all Medical Institutions governed under this Act. NEET (UG) shall also be applicable to admission to BHMS course as per National Commission for Homeopathy Act, 2020. The languages in which the NEET (UG) 2026[...]</p>
+            <a href="#" class="btn">Read More</a>
+        </div>
+    </div>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+            }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+
+        // --- SCENE SETUP ---
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ 
+            antialias: true, 
+            alpha: true 
+        });
+        
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        document.body.appendChild(renderer.domElement);
+
+        // --- CREATING THE CORE 3D OBJECT ---
+        // An Icosahedron represents a modern "geometric node"
+        const geometry = new THREE.IcosahedronGeometry(2, 0); 
+        const material = new THREE.MeshStandardMaterial({ 
+            color: 0x6366f1,
+            wireframe: true,
+            emissive: 0x2e1065,
+            emissiveIntensity: 0.5
+        });
+        const mesh = new THREE.Mesh(geometry, material);
+        scene.add(mesh);
+
+        // Add a secondary solid inner core
+        const coreGeom = new THREE.IcosahedronGeometry(1, 0);
+        const coreMat = new THREE.MeshPhongMaterial({ color: 0xffffff, shininess: 100 });
+        const core = new THREE.Mesh(coreGeom, coreMat);
+        scene.add(core);
+
+        // --- LIGHTING ---
+        const pointLight = new THREE.PointLight(0x6366f1, 50);
+        pointLight.position.set(5, 5, 5);
+        scene.add(pointLight);
+
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+        scene.add(ambientLight);
+
+        camera.position.z = 6;
+
+        // --- INTERACTIVITY ---
+        let mouseX = 0;
+        let mouseY = 0;
+
+        window.addEventListener('mousemove', (event) => {
+            // Normalize mouse coordinates (-1 to +1)
+            mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+            mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+        });
+
+        // --- ANIMATION LOOP ---
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Subtle Auto-rotation
+            mesh.rotation.y += 0.002;
+            mesh.rotation.x += 0.001;
+
+            // Follow Mouse (Smoothing)
+            const targetX = mouseX * 0.5;
+            const targetY = mouseY * 0.5;
+            
+            mesh.position.x += (targetX - mesh.position.x) * 0.05;
+            mesh.position.y += (targetY - mesh.position.y) * 0.05;
+            
+            core.rotation.y -= 0.005; // Counter-rotate core
+
+            renderer.render(scene, camera);
+        }
+
+        // Handle Resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        animate();
+    </script>
+</body>
+</html>
