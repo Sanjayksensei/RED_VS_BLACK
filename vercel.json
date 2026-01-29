@@ -1,0 +1,8 @@
+{
+  "cleanUrls": true,
+  "framework": null,
+  "installCommand": "echo 'No install needed'",
+  "buildCommand": "echo 'No build needed'"
+}git add vercel.json
+git commit -m "Configure Vercel for static hosting"
+git push origin main
